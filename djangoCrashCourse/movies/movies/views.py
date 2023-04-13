@@ -1,5 +1,5 @@
-from django.http import HttpResponse
-from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, redirect
 from .models import Movie
 
 
@@ -12,6 +12,28 @@ def movies(request):
 
 def home(response):
     return HttpResponse("home page")
+
+def detail(request, id):
+    data = Movie.objects.get(pk=id)
+    return render(request, 'movies/detail.html', {"movie" : data})
+
+def add(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        year = request.POST.get('year')
+        print(title, year)
+
+        if title and year:
+            movie = Movie(title=title, year=year)
+            movie.save()
+            return HttpResponseRedirect('/movies')
+
+
+        
+        
+
+    return render(request, 'movies/add.html')
+
 
 
 
