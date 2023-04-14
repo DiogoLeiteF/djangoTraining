@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'apptest/css/style.css' %}">
+    <title>Home</title>
+</head>
+
+<body>
+    <h1>access records</h1>
+    <form action="" method="POST">
+        {% csrf_token %}
+        <label for="topic">Filter by topic</label>
+        <input type="text" name="topic" id="topic" placeholder="value">
+        <input type="submit" value="Filter">
+        
+    </form>
+
+    <div class="django">
+        {% if access_records %}
+        <table>
+            <thead>
+                <th>Date Accessed</th>
+                <th>Site Name</th>
+                <th>Site URL</th>
+                <th>Site Topic</th>
+            </thead>
+            <tbody>
+                {% for acc in access_records %}
+                <tr>
+                    <td>{{acc.date}}</td>
+                    <td>{{acc.name}}</td>
+                    <td>{{acc.name.url}}</td>
+                    <td>{{acc.name.topic}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No access records found</p>
+        {% endif %}
+    </div>
+</body>
+
+</html>

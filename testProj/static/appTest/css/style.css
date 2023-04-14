@@ -1,0 +1,9 @@
+/* body{
+    background-color: rgb(54, 54, 54);
+    color: rgb(189, 189, 189);
+} */
+
+img{
+    max-width: 75px;
+    vertical-align:bottom;
+}
