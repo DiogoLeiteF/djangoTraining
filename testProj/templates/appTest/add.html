@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Access Record</title>
+</head>
+<body>
+    <h1>Add access records</h1>
+    <h2>{{ msg }}</h2>
+    <form action="" method="POST">
+        {% csrf_token %}
+        <label for="topic">topic</label>
+        <input type="text" name="topic" id="topic" placeholder="value">
+        <label for="name">name</label>
+        <input type="text" name="name" id="name" placeholder="name">
+        <label for="url">url</label>
+        <input type="text" name="url" id="url" placeholder="url">
+                
+        <input type="submit" value="Add Access">
+        
+    </form>
+    <a href="../">back home</a>
+
+</body>
+</html>
