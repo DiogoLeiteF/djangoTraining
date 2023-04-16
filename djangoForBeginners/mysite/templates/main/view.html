@@ -1,0 +1,22 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+{{ user }} Lists
+{% endblock %}
+
+{% block content %}
+
+<h1>{{ user }} Lists</h1>
+<form action="" method="post">
+    {% csrf_token %}
+
+    {% for item in list %}
+    <p><a href="../{{item.id}}">{{item.name}}</a></p>
+    <a href="/delete/{{item.id}}" class="btn btn-danger">Delete List</a>
+    <hr>
+    {% endfor %}
+
+
+</form>
+
+{% endblock %}
