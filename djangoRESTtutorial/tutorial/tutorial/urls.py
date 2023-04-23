@@ -23,8 +23,8 @@ from rest_framework.urlpatterns import format_suffix_patterns
 
 
 router = routers.DefaultRouter()
-router.register(r"users", views.UserViewSet)
-router.register(r"groups", views.GroupViewSet)
+# router.register(r"users", views.UserViewSet)
+# router.register(r"groups", views.GroupViewSet)
 
 
 
@@ -34,10 +34,14 @@ router.register(r"groups", views.GroupViewSet)
 urlpatterns = [
     
     # path("", include(router.urls)),
+    path("admin/", admin.site.urls),
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
-    path("movies/", views.movies_list, name="movies"),
-    path("movie/<int:pk>", views.movie_detail, name="movie details"),
+    # path("movies/", views.movies_list, name="movies"),
+    # path("movie/<int:pk>", views.movie_detail, name="movie details"),
+    path("snippets/", views.SnippetList.as_view()),
+    path("snippets/<int:pk>", views.SnippetDetail.as_view()),
+
 ]
 
-
-# urlpatterns = format_suffix_patterns(urlpatterns)
+# does not work with routers
+urlpatterns = format_suffix_patterns(urlpatterns)

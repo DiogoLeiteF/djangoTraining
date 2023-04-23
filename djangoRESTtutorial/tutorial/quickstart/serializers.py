@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
-from quickstart.models import Movie
+from quickstart.models import Movie, Snippets
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -19,3 +19,10 @@ class MovieSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Movie
         fields = ["name", "description"]
+
+
+
+class SnippetSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Snippets
+        fields= ["snippet"]
