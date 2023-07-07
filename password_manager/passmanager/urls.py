@@ -22,5 +22,6 @@ urlpatterns = [
     
     path('', views.index, name="Home"),
     path('manager/', views.manager, name="manager"),
+    path('signin/', views.manager, name="signin"),
     
 ]

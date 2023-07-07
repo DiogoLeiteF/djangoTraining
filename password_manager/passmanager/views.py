@@ -1,12 +1,14 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from .forms import LoginForm
+
 # from django.http import HttpResponse
 
 # Create your views here
 
+
 def index(request):
-        # if this is a POST request we need to process the form data
+    # if this is a POST request we need to process the form data
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
         form = LoginForm(request.POST)
@@ -24,5 +26,10 @@ def index(request):
 
     return render(request, "passmanager/index.html", {"form": form})
 
+
 def manager(request):
-    return render(request, 'passmanager/manager.html')
+    return render(request, "passmanager/manager.html")
+
+
+def sign_in(request):
+    return render(request, "passmanager/signin.html")
