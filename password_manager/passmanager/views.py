@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django import forms
+from .forms import Register
 
 # from django.http import HttpResponse
 
@@ -27,8 +28,25 @@ def manager(request):
 
 
 def sign_up(request):
+    
+    
     if request.method =="POST":
-        pass
+        print(0)
+        username = request.POST.get('user')
+        email = request.POST.get('email')
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+
+        if username and email and password1 and password2:
+            print("1")
+            if password2 == password1:
+                print("2")
+                newuser = User(username=username, email=email, password = password1)
+                newuser.save()
+                login(request, user=newuser)
+                return HttpResponseRedirect("/manager")
+        
+    print("3")
     return render(request, "passmanager/signup.html")
 
 
