@@ -1,10 +1,11 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import MD5PasswordHasher
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django import forms
-from .forms import Register
+
 
 # from django.http import HttpResponse
 
@@ -27,27 +28,29 @@ def manager(request):
     return render(request, "passmanager/manager.html")
 
 
-def sign_up(request):
-    
-    
+def sign_up(request):  
+    data = {}     
     if request.method =="POST":
-        print(0)
         username = request.POST.get('user')
         email = request.POST.get('email')
         password1 = request.POST.get('password1')
         password2 = request.POST.get('password2')
 
         if username and email and password1 and password2:
-            print("1")
             if password2 == password1:
-                print("2")
-                newuser = User(username=username, email=email, password = password1)
-                newuser.save()
-                login(request, user=newuser)
-                return HttpResponseRedirect("/manager")
+                user_qs = User.objects.filter(username=username)
+                email_qs = User.objects.filter(email=email)
         
-    print("3")
-    return render(request, "passmanager/signup.html")
+                if user_qs.exists() or email_qs.exists():
+                    data={"msg":"user already exists"}
+                else:
+                    newuser = User(username=username, email=email)
+                    newuser.set_password(password1)
+                    newuser.save()
+                    login(request, user=newuser)
+                    return HttpResponseRedirect("/manager")
+        
+    return render(request, "passmanager/signup.html", context=data)
 
 
 def log_out(request):
