@@ -1,6 +1,10 @@
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from .forms import LoginForm
+from django import forms
 
 # from django.http import HttpResponse
 
@@ -8,28 +12,33 @@ from .forms import LoginForm
 
 
 def index(request):
-    # if this is a POST request we need to process the form data
     if request.method == "POST":
-        # create a form instance and populate it with data from the request:
         form = LoginForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
-            # process the data in form.cleaned_data as required
-            # ...
-            # redirect to a new URL:
-            print(form.data)
-            return HttpResponseRedirect("/manager")
-
+            username = form.data.get('user')
+            password = form.data.get('password')
+            user = authenticate(username=username, password=password)
+            if user: 
+                login(request, user=user)
+                return HttpResponseRedirect("/manager")
     # if a GET (or any other method) we'll create a blank form
     else:
-        form = LoginForm()
+        return render(request, "passmanager/index.html")
 
-    return render(request, "passmanager/index.html", {"form": form})
+    return render(request, "passmanager/index.html")
 
-
+@login_required()
 def manager(request):
     return render(request, "passmanager/manager.html")
 
 
-def sign_in(request):
-    return render(request, "passmanager/signin.html")
+def sign_up(request):
+    if request.method =="POST":
+        pass
+    return render(request, "passmanager/signup.html")
+
+
+def log_out(request):
+    logout(request)
+    return HttpResponseRedirect("/")
