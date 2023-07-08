@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django import forms
+from .models import PasswordsList
 
 
 # from django.http import HttpResponse
@@ -25,7 +26,12 @@ def index(request):
 
 @login_required()
 def manager(request):
-    return render(request, "passmanager/manager.html")
+    data = {}
+    user = request.user
+    pass_list = PasswordsList.objects.filter(user = user)
+    data['list'] = pass_list
+    data['user'] = user.username
+    return render(request, "passmanager/manager.html",context=data)
 
 
 def sign_up(request):  
