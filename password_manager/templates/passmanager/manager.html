@@ -90,7 +90,7 @@
                                  name="site"
                                  required
                                  value="{{ entry.site }}">
-                          <label for="floatingInput">{{ entry.site }}</label>
+                          <label for="floatingInput">Site</label>
                         </div>
                         <div class="form-floating md-2">
                           <input type="password"
@@ -100,14 +100,14 @@
                                  name="password"
                                  required
                                  value="{{ entry.password }}">
-                          <label for="floatingPassword">{{ entry.password }}</label>
+                          <label for="floatingPassword">Password</label>
                         </div>
                         <div class="form-floating">
                           <textarea class="form-control "
                                     aria-label="With textarea"
                                     placeholder="Notes"
                                     name="notes"
-                                    style="height: 200px">{{ entry.notes }} {{entry.id}}</textarea>
+                                    style="height: 200px">{{ entry.notes }}</textarea>
                         </div>
                         <input type="hidden" value="{{ entry.id }}" name="id">
                       </div>
@@ -148,8 +148,8 @@
                     <div class="modal-footer">
                       <form action="../delete/" method="post">
                         {% csrf_token %} 
-                        <input type="text" value="{{ entry.id }}" name="id">
-                        <button class="btn btn-danger btn-sm w-100 py-2" type="submit">Delete</button>
+                        <input type="hidden" value="{{ entry.id }}" name="id">
+                        <button class="btn btn-danger btn-sm" type="submit">Delete</button>
                       </form>
                     </div>
                   </div>
