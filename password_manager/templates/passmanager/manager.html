@@ -1,36 +1,110 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="description" content="">
-        <meta name="keywords" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Manager</title>
-        <link rel="stylesheet" href="{% static 'passmanager/css/style.css' %}">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-              rel="stylesheet"
-              integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
-              crossorigin="anonymous">
-    </head>
-    <body data-bs-theme="dark">
-        <main class="form-signin w-100 m-auto">
-            <p class="mt-5 mb-3 text-body-secondary">
-                <a href="/log-out">Log Out</a>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'passmanager/css/style.css' %}">
+  </head>
+  <body data-bs-theme="dark">
+    <main class="container-sm">
+      <p class="mt-5 mb-3 text-body-secondary">
+        <a href="/log-out">Log Out</a>
+      </p>
+      <p class="mt-5 mb-3 text-body-secondary">Hello {{ user }}</p>
+      {% for entry in list %}
+        <div class="card mt-2 w-75 m-auto">
+          <div class="card-body">
+            <p class="card-title">
+              <strong>{{ entry.site }}</strong>
             </p>
-            <p class="mt-5 mb-3 text-body-secondary">Hello {{ user }}</p>
-            {% for entry in list %}
-                <div class="card">
-                    <div class="card-body">
-                        <p>{{ entry.site }}</p>
-                        <p>{{ entry.password }}</p>
-                        <p>{{ entry.notes }}</p>
+            <p class="card-text">{{ entry.password }}</p>
+            <p class="card-text">{{ entry.notes }}</p>
+            <hr>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <!-- Button trigger Edit modal -->
+              <button type="button"
+                      class="btn btn-dark btn-sm"
+                      data-bs-toggle="modal"
+                      data-bs-target="#EditModal{{ entry }}">Edit</button>
+              <!-- Button trigger Edit modal -->
+              <button type="button"
+                      class="btn btn-danger btn-sm"
+                      data-bs-toggle="modal"
+                      data-bs-target="#DeleteModal">Delete</button>
+              <!-- Edit Modal -->
+              <div class="modal fade"
+                   id="EditModal{{ entry }}"
+                   tabindex="-1"
+                   aria-labelledby="EditModalLabel"
+                   aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Edit</h5>
+                      <button type="button"
+                              class="btn-close"
+                              data-bs-dismiss="modal"
+                              aria-label="Close"></button>
                     </div>
+                    <div class="modal-body">
+                      <form action="../edit/" method="post">
+                        {% csrf_token %}
+                        <div class="form-floating md-2">
+                          <input type="text"
+                                 class="form-control"
+                                 id="floatingInput"
+                                 placeholder="site"
+                                 name="site"
+                                 required
+                                 value="{{ entry.site }}">
+                          <label for="floatingInput">{{ entry.site }}</label>
+                        </div>
+                        <div class="form-floating md-2" >
+                          <input type="password"
+                                 class="form-control"
+                                 id="floatingPassword"
+                                 placeholder="Password"
+                                 name="password"
+                                 required
+                                 value="{{ entry.password }}">
+                          <label for="floatingPassword">{{ entry.password }}</label>
+                        </div>
+                        <div class="form-floating">
+                          <!-- <input type="textarea" class="form-control" id="floatingPassword" placeholder="Notes" name="notes" required>
+                          <label for="floatingPassword">{{ entry.notes }}</label> -->
+                          <textarea class="form-control "
+                                    aria-label="With textarea"
+                                    placeholder="Notes"
+                                    name="notes"
+                                    style="height: 200px"
+                                    >{{ entry.notes }} {{entry.id}}</textarea>
+                        </div>
+                        <input type="hidden" value="{{entry.id}}" name="id">
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-dark w-100 py-2" data-bs-dismiss="modal">Close</button>
+                        <button class="btn btn-dark w-100 py-2" type="submit">Save changes</button>
+                        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+                      </form>
+                    </div>
+                  </div>
                 </div>
-            {% endfor %}
-        </main>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-                integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
-                crossorigin="anonymous"></script>
-    </body>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+            crossorigin="anonymous"></script>
+  </body>
 </html>
