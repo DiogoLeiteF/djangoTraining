@@ -20,35 +20,64 @@
       </p>
       <div>
         <div class="modal fade"
-             id="exampleModalToggle"
+             id="newPassword"
              aria-hidden="true"
-             aria-labelledby="exampleModalToggleLabel"
+             aria-labelledby="newPasswordLabel"
              tabindex="-1">
           <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalToggleLabel">Modal 1</h5>
+                <h5 class="modal-title" id="newPasswordLabel">Save new password</h5>
                 <button type="button"
                         class="btn-close"
                         data-bs-dismiss="modal"
                         aria-label="Close"></button>
               </div>
-              <div class="modal-body">Show a second modal and hide this one with the button below.</div>
-              <div class="modal-footer">
-                <button class="btn btn-primary"
-                        data-bs-target="#exampleModalToggle2"
-                        data-bs-toggle="modal"
-                        data-bs-dismiss="modal">Open second modal</button>
-              </div>
+              <form action="../new/" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                  <p>Enter your data below.</p>
+                  <div class="form-floating md-2">
+                    <input type="text"
+                           class="form-control"
+                           id="floatingInput"
+                           placeholder="site"
+                           name="site"
+                           required>
+                    <label for="floatingInput">Site</label>
+                  </div>
+                  <div class="form-floating md-2">
+                    <input type="password"
+                           class="form-control"
+                           id="floatingPassword"
+                           placeholder="Password"
+                           name="password"
+                           required>
+                    <label for="floatingPassword">Password</label>
+                  </div>
+                  <div class="form-floating">
+                    <textarea class="form-control"
+                              id="floatingNotes"
+                              aria-label="With textarea"
+                              placeholder="Notes"
+                              name="notes"
+                              style="height: 200px"></textarea>
+                              <label for="floatingNotes">Notes</label>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-dark w-100 py-2" type="submit">Save</button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
-        <a class="btn btn-primary"
+        <p class="mt-5 mb-3 text-body-secondary">Hello {{ user }}</p>
+        <a class="btn btn-dark w-100 mx-auto"
            data-bs-toggle="modal"
-           href="#exampleModalToggle"
-           role="button">Open first modal</a>
+           href="#newPassword"
+           role="button">Save New Password</a>
       </div>
-      <p class="mt-5 mb-3 text-body-secondary">Hello {{ user }}</p>
       {% for entry in list %}
         <div class="card mt-2 w-75 m-auto">
           <div class="card-body">
@@ -147,7 +176,7 @@
                     </div>
                     <div class="modal-footer">
                       <form action="../delete/" method="post">
-                        {% csrf_token %} 
+                        {% csrf_token %}
                         <input type="hidden" value="{{ entry.id }}" name="id">
                         <button class="btn btn-danger btn-sm" type="submit">Delete</button>
                       </form>

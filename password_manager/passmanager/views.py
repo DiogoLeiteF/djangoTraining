@@ -81,7 +81,14 @@ def edit_data(request):
 
 @login_required()
 def new_data(request):
-    pass
+    if request.method == "POST":
+        user= request.user
+        site = request.POST.get("site")
+        password = request.POST.get("password")
+        notes = request.POST.get("notes")
+        new = PasswordsList(user=user, site=site, password=password, notes=notes)
+        new.save()
+    return redirect("/manager")
 
 @login_required()
 def delete_data(request):
@@ -90,6 +97,5 @@ def delete_data(request):
         to_delete = PasswordsList.objects.filter(id=_id).first()
         if to_delete:
             to_delete.delete()
-            
-            
-        return redirect("/manager")
+
+    return redirect("/manager")
