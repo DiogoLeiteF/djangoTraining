@@ -20,7 +20,7 @@ def index(request):
         user = authenticate(username=username, password=password)
         if user:
             login(request, user=user)
-            return HttpResponseRedirect("/manager")
+            return redirect("/manager")
     # if a GET (or any other method) we'll create a blank form
     return render(request, "passmanager/index.html")
 
@@ -59,7 +59,12 @@ def sign_up(request):
 
     return render(request, "passmanager/signup.html", context=data)
 
+@login_required()
+def log_out(request):
+    logout(request)
+    return HttpResponseRedirect("/")
 
+@login_required()
 def edit_data(request):
     if request.method == "POST":
         _id = request.POST.get("id")
@@ -74,7 +79,17 @@ def edit_data(request):
             edit.save()
         return redirect("/manager")
 
+@login_required()
+def new_data(request):
+    pass
 
-def log_out(request):
-    logout(request)
-    return HttpResponseRedirect("/")
+@login_required()
+def delete_data(request):
+    if request.method == "POST":
+        _id = request.POST.get("id")
+        to_delete = PasswordsList.objects.filter(id=_id).first()
+        if to_delete:
+            to_delete.delete()
+            
+            
+        return redirect("/manager")

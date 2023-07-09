@@ -18,6 +18,36 @@
       <p class="mt-5 mb-3 text-body-secondary">
         <a href="/log-out">Log Out</a>
       </p>
+      <div>
+        <div class="modal fade"
+             id="exampleModalToggle"
+             aria-hidden="true"
+             aria-labelledby="exampleModalToggleLabel"
+             tabindex="-1">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalToggleLabel">Modal 1</h5>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+              </div>
+              <div class="modal-body">Show a second modal and hide this one with the button below.</div>
+              <div class="modal-footer">
+                <button class="btn btn-primary"
+                        data-bs-target="#exampleModalToggle2"
+                        data-bs-toggle="modal"
+                        data-bs-dismiss="modal">Open second modal</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <a class="btn btn-primary"
+           data-bs-toggle="modal"
+           href="#exampleModalToggle"
+           role="button">Open first modal</a>
+      </div>
       <p class="mt-5 mb-3 text-body-secondary">Hello {{ user }}</p>
       {% for entry in list %}
         <div class="card mt-2 w-75 m-auto">
@@ -34,11 +64,6 @@
                       class="btn btn-dark btn-sm"
                       data-bs-toggle="modal"
                       data-bs-target="#EditModal{{ entry }}">Edit</button>
-              <!-- Button trigger Edit modal -->
-              <button type="button"
-                      class="btn btn-danger btn-sm"
-                      data-bs-toggle="modal"
-                      data-bs-target="#DeleteModal">Delete</button>
               <!-- Edit Modal -->
               <div class="modal fade"
                    id="EditModal{{ entry }}"
@@ -67,7 +92,7 @@
                                  value="{{ entry.site }}">
                           <label for="floatingInput">{{ entry.site }}</label>
                         </div>
-                        <div class="form-floating md-2" >
+                        <div class="form-floating md-2">
                           <input type="password"
                                  class="form-control"
                                  id="floatingPassword"
@@ -78,21 +103,53 @@
                           <label for="floatingPassword">{{ entry.password }}</label>
                         </div>
                         <div class="form-floating">
-                          <!-- <input type="textarea" class="form-control" id="floatingPassword" placeholder="Notes" name="notes" required>
-                          <label for="floatingPassword">{{ entry.notes }}</label> -->
                           <textarea class="form-control "
                                     aria-label="With textarea"
                                     placeholder="Notes"
                                     name="notes"
-                                    style="height: 200px"
-                                    >{{ entry.notes }} {{entry.id}}</textarea>
+                                    style="height: 200px">{{ entry.notes }} {{entry.id}}</textarea>
                         </div>
-                        <input type="hidden" value="{{entry.id}}" name="id">
+                        <input type="hidden" value="{{ entry.id }}" name="id">
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-dark w-100 py-2" data-bs-dismiss="modal">Close</button>
                         <button class="btn btn-dark w-100 py-2" type="submit">Save changes</button>
-                        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Button trigger Delete modal -->
+              <button class="btn btn-danger btn-sm"
+                      data-bs-target="#deleteModal{{ entry }}"
+                      data-bs-toggle="modal"
+                      data-bs-dismiss="modal">Delete</button>
+              <!-- Delete Modal -->
+              <div class="modal fade"
+                   id="deleteModal{{ entry }}"
+                   aria-hidden="true"
+                   aria-labelledby="exampleModalToggleLabel2"
+                   tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalToggleLabel2">Delete</h5>
+                      <button type="button"
+                              class="btn-close"
+                              data-bs-dismiss="modal"
+                              aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <p>
+                        Data for <strong>{{ entry.site }}</strong> will be deleted.
+                      </p>
+                      <p>Are you sure?</p>
+                    </div>
+                    <div class="modal-footer">
+                      <form action="../delete/" method="post">
+                        {% csrf_token %} 
+                        <input type="text" value="{{ entry.id }}" name="id">
+                        <button class="btn btn-danger btn-sm w-100 py-2" type="submit">Delete</button>
                       </form>
                     </div>
                   </div>
