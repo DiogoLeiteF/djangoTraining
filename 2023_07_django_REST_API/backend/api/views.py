@@ -44,14 +44,27 @@ from rest_framework.response import Response
 #     return JsonResponse(data)
 
 
-@api_view(["GET"])
+# @api_view(["GET"])
+# def api_home(request, *args, **kwargs):
+#     """
+#     DRF API View
+#     """
+#     instance = Product.objects.all().order_by("?").first()
+#     data = {}
+#     if instance:
+#         # data = model_to_dict(instance, fields=["id", "title", "price"])
+#         data= ProductSerializer(instance).data
+#     return Response(data)
+
+@api_view(["POST"])
 def api_home(request, *args, **kwargs):
     """
     DRF API View
     """
-    instance = Product.objects.all().order_by("?").first()
-    data = {}
-    if instance:
-        # data = model_to_dict(instance, fields=["id", "title", "price"])
-        data= ProductSerializer(instance).data
-    return Response(data)
+    serializer = ProductSerializer(data=request.data)
+    if serializer.is_valid(raise_exception=True):
+        serializer.save()
+        print(serializer.data)
+        return Response(serializer.data)
+    return Response({"invalid": "not good data"}, status=400)
+    
