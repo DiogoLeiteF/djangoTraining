@@ -17,7 +17,7 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         # fields = "__all__"
         # fields = ("name", "price")
-        fields = ("id", "name", "description", "price", "brand", "category", "stock", "user", "images")
+        fields = ("id", "name", "description", "price", "brand", "ratings", "category", "stock", "user", "images")
 
         extra_kwargs = {
             "name": {"required": True, "allow_blank": False},

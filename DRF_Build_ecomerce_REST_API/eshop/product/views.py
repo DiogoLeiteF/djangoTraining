@@ -66,3 +66,42 @@ def upload_product_images(request):
     serializer = ProductImagesSerializer(images, many=True)
 
     return Response(serializer.data)
+
+
+@api_view(["PUT"])
+def update_product(request, pk):
+    product = get_object_or_404(Product, id=pk)
+
+    # TODO check if user is same
+
+    # cannot use because of serializer validator
+    # if request.method == "PUT":
+    #     serializer = ProductSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # return Response({"error": "invalid method"}, status=status.HTTP_400_BAD_REQUEST)
+
+    if request.method == "PUT":
+        if request.data.get("name"):
+            product.name = request.data.get("name")
+        if request.data.get("description"):
+            product.description = request.data.get("description")
+        if request.data.get("price"):
+            product.price = request.data.get("price")
+        if request.data.get("brand"):
+            product.brand = request.data.get("brand")
+        if request.data.get("ratings"):
+            product.ratings = request.data.get("ratings")
+        if request.data.get("category"):
+            product.category = request.data.get("category")
+        if request.data.get("stock"):
+            product.stock = request.data.get("stock")
+
+        product.save()
+
+        serializer = ProductSerializer(product)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    return Response({"error": "invalid method"}, status=status.HTTP_400_BAD_REQUEST)
