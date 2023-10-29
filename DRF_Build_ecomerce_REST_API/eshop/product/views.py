@@ -1,3 +1,4 @@
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -6,8 +7,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .filters import Productsfilter
-from .models import Product, ProductImages
-from .serializers import ProductSerializer, ProductImagesSerializer
+from .models import Product, ProductImages, Review
+from .serializers import ProductSerializer, ProductImagesSerializer, ReviewSerializer
 
 
 # Create your views here.
@@ -43,7 +44,7 @@ def get_product(request, pk):
 
 
 @api_view(["POST"])
-@permission_classes(IsAuthenticated)
+@permission_classes([IsAuthenticated])
 def new_product(request):
     if request.method == "POST":
         serializer = ProductSerializer(data=request.data, user=request.user)
@@ -71,7 +72,7 @@ def upload_product_images(request):
 
 
 @api_view(["PUT"])
-@permission_classes(IsAuthenticated)
+@permission_classes([IsAuthenticated])
 def update_product(request, pk):
     product = get_object_or_404(Product, id=pk)
 
@@ -112,14 +113,14 @@ def update_product(request, pk):
 
 
 @api_view(["DELETE"])
-@permission_classes(IsAuthenticated)
+@permission_classes([IsAuthenticated])
 def delete_product(request, pk):
     product = get_object_or_404(Product, id=pk)
 
     if not product.user == request.user:
         return Response({"error": "You cannot delete this product"}, status=status.HTTP_401_UNAUTHORIZED)
 
-    #delete from ProductImages
+    # delete from ProductImages
     args = {"product": pk}
     images = ProductImages.objects.filter(**args)
     for i in images:
@@ -129,3 +130,76 @@ def delete_product(request, pk):
     product.delete()
 
     return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def create_review(request, pk):
+    user = request.user
+    product = get_object_or_404(Product, pk=pk)
+    data = request.data
+    print(data)
+
+    review = Review.objects.filter(user=user, product=product)
+
+    if not data.get("rating"):
+        return Response({"error": "Rating is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+    if data["rating"] <= 0 or data["rating"] > 5:
+        return Response({"error": "Rating must be between 1-5"}, status=status.HTTP_400_BAD_REQUEST)
+
+    if review.exists():
+        new_review = {"rating": data["rating"], "comment": data.get("comment")}
+        review.update(**new_review)
+
+        # calculate the avg of ratings with aggregate
+        update_product_rating(product=product)
+
+        return Response({"detail": "review updated"}, status=status.HTTP_200_OK)
+
+    new_review = {
+        "rating": data["rating"],
+        "comment": data.get("comment"),
+        "user": user.id,
+        "product": product.id
+    }
+    serializer = ReviewSerializer(data=new_review, many=False)
+    if serializer.is_valid():
+        serializer.save()
+
+        # calculate the avg of ratings with aggregate
+        update_product_rating(product=product)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        return Response(serializer.errors)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def list_reviews(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    serializer = ReviewSerializer(product.reviews, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
+def delete_review(request, pk):
+    user = request.user
+    product = get_object_or_404(Product, pk=pk)
+    review = get_object_or_404(Review, product=pk, user=user.id)
+    review.delete()
+
+    # calculate the avg of ratings with aggregate
+    update_product_rating(product=product)
+
+    return Response({"detail": "review deleted"}, status=status.HTTP_200_OK)
+
+
+def update_product_rating(product: Product):
+    # calculate the avg of ratings with aggregate
+    ratings = product.reviews.aggregate(avg_ratings=Avg("rating"))
+    ratings["avg_ratings"] = ratings["avg_ratings"] or 0
+    product.ratings = ratings["avg_ratings"]
+    product.save()
