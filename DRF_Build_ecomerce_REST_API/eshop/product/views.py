@@ -1,7 +1,8 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .filters import Productsfilter
@@ -42,9 +43,10 @@ def get_product(request, pk):
 
 
 @api_view(["POST"])
+@permission_classes(IsAuthenticated)
 def new_product(request):
     if request.method == "POST":
-        serializer = ProductSerializer(data=request.data)
+        serializer = ProductSerializer(data=request.data, user=request.user)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -69,10 +71,12 @@ def upload_product_images(request):
 
 
 @api_view(["PUT"])
+@permission_classes(IsAuthenticated)
 def update_product(request, pk):
     product = get_object_or_404(Product, id=pk)
 
-    # TODO check if user is same
+    if not product.user == request.user:
+        return Response({"error": "You cannot update this product"}, status=status.HTTP_401_UNAUTHORIZED)
 
     # cannot use because of serializer validator
     # if request.method == "PUT":
@@ -108,10 +112,12 @@ def update_product(request, pk):
 
 
 @api_view(["DELETE"])
+@permission_classes(IsAuthenticated)
 def delete_product(request, pk):
     product = get_object_or_404(Product, id=pk)
 
-    # TODO check if user is same
+    if not product.user == request.user:
+        return Response({"error": "You cannot delete this product"}, status=status.HTTP_401_UNAUTHORIZED)
 
     #delete from ProductImages
     args = {"product": pk}
