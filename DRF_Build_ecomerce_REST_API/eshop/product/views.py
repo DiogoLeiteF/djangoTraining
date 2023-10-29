@@ -105,3 +105,21 @@ def update_product(request, pk):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     return Response({"error": "invalid method"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["DELETE"])
+def delete_product(request, pk):
+    product = get_object_or_404(Product, id=pk)
+
+    # TODO check if user is same
+
+    #delete from ProductImages
+    args = {"product": pk}
+    images = ProductImages.objects.filter(**args)
+    for i in images:
+        i.delete()
+
+    # delete product
+    product.delete()
+
+    return Response(status=status.HTTP_204_NO_CONTENT)
